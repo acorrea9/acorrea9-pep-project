@@ -80,4 +80,47 @@ public class MessageDAO {
 
         return null;
     }
+
+    public boolean deleteMessage(int id) {
+        Connection conn = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "DELETE FROM message WHERE message_id=?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setInt(1, id);
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if(affectedRows == 1) {
+                return true;
+            }
+        }
+        catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+    }
+
+    public boolean updateMessage(int id, Message message) {
+        Connection conn = ConnectionUtil.getConnection();
+
+        try {
+            System.out.println(message.getMessage_text());
+            String sql = "UPDATE message SET message_text=? WHERE message_id=?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, id);
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if(affectedRows == 1) {
+                return true;
+            }
+        }
+        catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
 }

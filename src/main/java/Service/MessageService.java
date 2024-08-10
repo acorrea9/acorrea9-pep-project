@@ -31,11 +31,22 @@ public class MessageService {
         return messageDAO.getMessageById(id);
     }
 
-    // public Message deleteMessageById(int id) {
+    public Message deleteMessage(int id) {
+        Message message = getMessageById(id);
+        if(message != null) {
+            if(messageDAO.deleteMessage(id)) {
+                return message;
+            }
+        }
+        return null;
+    }
 
-    // }
-
-    // public Message updateMessageById(int id) {
-
-    // }
+    public Message updateMessage(int id, Message message) {
+        if((getMessageById(id) != null) && (message.getMessage_text().length() > 0) && (message.getMessage_text().length() <= 255)) {
+            if(messageDAO.updateMessage(id, message)) {
+                return getMessageById(id);
+            }
+        }
+        return null;
+    }
 }
