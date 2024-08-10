@@ -1,7 +1,5 @@
 package Controller;
 
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +53,14 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
+    /**
+     * Handler to process new User registrations.
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
+     * If AccountService returns a null account (meaning creating an Account was unsuccessful), the API will return a 400
+     * message (client error).
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void postRegisterAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
@@ -67,6 +73,14 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler to process new User logins.
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
+     * If AccountService returns a null account (meaning verifying/logging in an Account was unsuccessful), 
+     * the API will return a 401 message (Unauthorized).
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void postLoginAccountHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
@@ -79,6 +93,14 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler to process the creation of new messages.
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into a Message object.
+     * If MessageService returns a null message (meaning creating a message was unsuccessful), the API will return a 400
+     * message (client error).
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void postMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
@@ -91,12 +113,22 @@ public class SocialMediaController {
         }
     }
 
-    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Message> allMessages = messageService.getAllMessages();
-        ctx.json(mapper.writeValueAsString(allMessages));
+    /**
+     * Handler to retrieve all messages.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     */
+    private void getAllMessagesHandler(Context ctx) {
+        ctx.json(messageService.getAllMessages());
     }
 
+    /**
+     * Handler to retrieve a message by its ID.
+     * The pathParam() method will extract the parameter from the URI in order to get the message_id.
+     * If MessageService returns a null message (meaning retrieving a Message was unsuccessful), 
+     * the response body will be empty.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("message_id"));
@@ -106,6 +138,14 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler to delete a message by its ID.
+     * The pathParam() method will extract the parameter from the URI in order to get the message_id.
+     * If MessageService returns a null message (meaning the deletion of a Message was unsuccessful), 
+     * the response body will be empty.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void deleteMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("message_id"));
@@ -115,6 +155,14 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Handler to update a message by its ID.
+     * The pathParam() method will extract the parameter from the URI in order to get the message_id.
+     * If MessageService returns a null message (meaning the updating of a Message was unsuccessful), 
+     * the API will return a 400 message (client error).
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
     private void patchMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         int id = Integer.parseInt(ctx.pathParam("message_id"));
@@ -128,10 +176,12 @@ public class SocialMediaController {
         }
     }
 
-    private void getAllMessagesByAccountIdHander(Context ctx) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+    /**
+     * Handler to retrieve all messages written by a particular user.
+     * @param ctx the context object handles information HTTP requests and generates responses within Javalin.
+     */
+    private void getAllMessagesByAccountIdHander(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("account_id"));
-        List<Message> allMessagesByAccountId = messageService.getAllMessagesByAccountId(id);
-        ctx.json(mapper.writeValueAsString(allMessagesByAccountId));
+        ctx.json(messageService.getAllMessagesByAccountId(id));
     }
 }
