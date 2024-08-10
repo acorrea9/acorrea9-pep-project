@@ -1,5 +1,6 @@
 package Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.MessageDAO;
@@ -48,5 +49,15 @@ public class MessageService {
             }
         }
         return null;
+    }
+
+    public List<Message> getAllMessagesByAccountId(int id) {
+        List<Message> list = new ArrayList<>();
+        for(Message message : getAllMessages()) {
+            if(message.getPosted_by() == id) {
+                list.add(message);
+            }
+        }
+        return list;
     }
 }
