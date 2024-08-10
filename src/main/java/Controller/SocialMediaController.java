@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -80,26 +82,39 @@ public class SocialMediaController {
     private void postMessageHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
-        Message addedMessage;
+        Message addedMessage = messageService.createMessage(message);
+        if(addedMessage != null) {
+            ctx.json(mapper.writeValueAsString(addedMessage));
+        }
+        else {
+            ctx.status(400);
+        }
     }
 
-    private void getAllMessagesHandler(Context ctx) {
-
+    private void getAllMessagesHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Message> allMessages = messageService.getAllMessages();
+        ctx.json(mapper.writeValueAsString(allMessages));
     }
 
-    private void getMessageByIdHandler(Context ctx) {
-
+    private void getMessageByIdHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        Message messageById = messageService.getMessageById(id);
+        if(messageById != null) {
+            ctx.json(mapper.writeValueAsString(messageById));
+        }
     }
 
     private void deleteMessageByIdHandler(Context ctx) {
-
+        ObjectMapper mapper = new ObjectMapper();
     }
 
     private void patchMessageByIdHandler(Context ctx) {
-
+        ObjectMapper mapper = new ObjectMapper();
     }
 
     private void getAllMessagesByAccountIdHander(Context ctx) {
-
+        ObjectMapper mapper = new ObjectMapper();
     }
 }
